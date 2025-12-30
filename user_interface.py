@@ -68,7 +68,7 @@ class Form(QDialog):
                         item_id = int(row[item_id_index])
                         item_name = row[item_name_index].strip()
                     except ValueError:
-                        print(f"Missing ID for {item_name}")
+                        print(f"未找到{item_name}相关的ID")
                     else:
                         item_dict[item_name] = item_id
 
