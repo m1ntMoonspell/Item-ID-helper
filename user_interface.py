@@ -6,6 +6,7 @@ import csv
 from pathlib import Path
 import json
 from popup_window import Popups
+from quick_gm import GMList
 
 class Form(QDialog):
     def __init__(self, parent=None):
@@ -18,6 +19,8 @@ class Form(QDialog):
         self.search_button.clicked.connect(self.get_gm_data)
         self.choose_button = QPushButton("打开文件")
         self.choose_button.clicked.connect(self.open_file)
+        self.quick_button = QPushButton("Quick GM")
+        self.quick_button.clicked.connect(self.quick_gm)
         self.lable = QLabel("All Rights Reserved" \
         "<a href='https://github.com/m1ntMoonspell?tab=repositories'>@m1nt</a>")
         self.lable.setOpenExternalLinks(True)
@@ -27,6 +30,7 @@ class Form(QDialog):
         layout.addWidget(self.search_button)
         layout.addWidget(self.clear_button)
         layout.addWidget(self.choose_button)
+        layout.addWidget(self.quick_button)
         layout.addWidget(self.lable)
         self.setLayout(layout)
         self.setWindowTitle("H75 Item ID Helper")
@@ -43,6 +47,25 @@ class Form(QDialog):
             self.path = fileName
             content = json.dumps(fileName)
             self.contentPath.write_text(content)
+
+    def quick_gm(self):
+        quick_dict = {}
+        fileName,idk = QFileDialog.getOpenFileName(self)
+        suffix = os.path.splitext(fileName)[1]
+        if fileName and suffix == ".txt":
+            content = Path(fileName).read_text(encoding="utf-8")
+            lines = content.splitlines()
+            for line in lines:
+                parts = line.split("^")
+                gm = parts[0]
+                title = parts[1]
+                quick_dict[title]=gm
+            quick_list = GMList(quick_dict)
+            if quick_list.exec():
+                quick_list.show()
+        else:
+            pass
+
 
     def get_gm_data(self):
         if not self.path:
