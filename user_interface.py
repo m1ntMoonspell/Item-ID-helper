@@ -15,6 +15,7 @@ class Form(QDialog):
         self.search_button = QPushButton("搜索")
         self.clear_button = QPushButton("清空输入内容")
         self.contentPath = Path("contentPath.json")
+        self.quickPath = Path("quickPath.json")
         self.clear_button.clicked.connect(self.edit.clear)
         self.search_button.clicked.connect(self.get_gm_data)
         self.choose_button = QPushButton("打开文件")
@@ -50,11 +51,10 @@ class Form(QDialog):
 
     def quick_gm(self):
         quick_dict = {}
-        fileName,idk = QFileDialog.getOpenFileName(self)
-        suffix = os.path.splitext(fileName)[1]
-        if fileName and suffix == ".txt":
-            content = Path(fileName).read_text(encoding="utf-8")
-            lines = content.splitlines()
+        if self.quickPath.exists():
+            quickPath = self.quickPath.read_text(encoding="utf-8")
+            quickFile = Path(json.loads(quickPath)).read_text(encoding="utf-8")
+            lines = quickFile.splitlines()
             for line in lines:
                 parts = line.split("^")
                 gm = parts[0]
@@ -64,7 +64,23 @@ class Form(QDialog):
             if quick_list.exec():
                 quick_list.show()
         else:
-            pass
+            fileName,idk = QFileDialog.getOpenFileName(self)
+            suffix = os.path.splitext(fileName)[1]
+            if fileName and suffix == ".txt":
+                path = json.dumps(fileName)
+                self.quickPath.write_text(path)
+                content = Path(fileName).read_text(encoding="utf-8")
+                lines = content.splitlines()
+                for line in lines:
+                    parts = line.split("^")
+                    gm = parts[0]
+                    title = parts[1]
+                    quick_dict[title]=gm
+                quick_list = GMList(quick_dict)
+                if quick_list.exec():
+                    quick_list.show()
+            else:
+                pass
 
 
     def get_gm_data(self):

@@ -12,7 +12,7 @@ class GMList(QDialog):
             if k == "重置宠物CD" or k == "觉醒单个宠物" or k == "Teleport":
                 button = QPushButton(f"{k}")
                 button.clicked.connect(lambda checked,
-                                       t=v:self.show_input(t,k))
+                                       t=v,title=k:self.show_input(t,title))
             else:
                 button = QPushButton(f"{k}")
                 button.clicked.connect(lambda checked,
@@ -28,7 +28,6 @@ class GMList(QDialog):
         inDia = InputDia(text,keys)
         if inDia.exec():
             inDia.show()
-            return inDia
 
 if __name__ == "__main__":
     app = QApplication()
